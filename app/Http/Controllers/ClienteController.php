@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cliente;
 use App\MatrizFilial;
+use App\Support\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,6 +29,7 @@ class ClienteController extends Controller
 
     public function matrizesFiliais()
     {
+
         $clientePer = Auth::user('api')->clienteObj->id;
 
         $matrizesFiliais = MatrizFilial::where('deleted', 0)->where('cliente', $clientePer)->get([

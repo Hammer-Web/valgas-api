@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MatrizFilial extends Model
 {
     protected $table = 'matriz_filial';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
       'id',

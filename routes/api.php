@@ -25,6 +25,22 @@ Route::group(['middleware' => ['apiJWT']], function (){
 
     Route::get('matrizes-filiais', 'ClienteController@matrizesFiliais')->name('matrizesFiliais');
 
+
+    //consultas
+    Route::group(['prefix' => 'consultas', 'namespace' => 'Consulta'], function () {
+
+        Route::post('/solicitar', 'ConsultaController@solicitar');
+
+//        Route::prefix('courses')->group(function () {
+//            Route::get('/', 'UserController@courses');
+//            Route::get('/{id}', 'CourseController@show');
+//        });
+
+    });
+    //consultas
+
+
+
 });
 
 
