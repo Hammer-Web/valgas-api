@@ -20,6 +20,7 @@ class UsersTableSeeder extends Seeder
             'password' => bcrypt('123456'),
             'status' => 'active',
             'role' => 'admin',
+            'cliente_id' => '260',
             'remember_token' => \Illuminate\Support\Str::random(10)
         ]);
 

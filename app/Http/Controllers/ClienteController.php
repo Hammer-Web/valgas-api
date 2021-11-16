@@ -7,6 +7,7 @@ use App\MatrizFilial;
 use App\Support\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ClienteController extends Controller
 {
@@ -51,5 +52,25 @@ class ClienteController extends Controller
         }
 
         return response()->json($matrizesFiliais);
+    }
+
+    public function veiculos()
+    {
+        $queryPes = DB::select(" SELECT * FROM veiculos limit 10 ");
+
+        return response()->json($queryPes);
+
+
+
+    }
+
+    public function marcas()
+    {
+        $queryPes = DB::select(" SELECT * FROM marcas_montadoras WHERE id <> 1 limit 10 ");
+
+        return response()->json($queryPes);
+
+
+
     }
 }

@@ -20,4 +20,10 @@ class Cliente extends Model
         'permitir_criacao_cliente',
         'criador',
     ];
+
+    public function filiais()
+    {
+        return $this->hasMany(MatrizFilial::class, 'cliente', 'id');
+
+    }
 }

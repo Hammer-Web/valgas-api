@@ -27,17 +27,18 @@ class ConsultaController extends Controller
                                            cliente_id = :cliente_id AND
                                            validade > :validade AND
                                            cnh_vencimento > :hoje ",
-                                        [
-                                            'cpf' => $request->cpf_motorista,
-                                            'tipo' => 1,
-                                            'validade' => time(),
-                                            'cliente_id' => auth('api')->user()->cliente_id,
-                                            'hoje' => $hoje
-                                        ]);
+            [
+                'cpf' => $request->cpf_motorista,
+                'tipo' => 1,
+                'validade' => time(),
+                'cliente_id' => auth('api')->user()->cliente_id,
+                'hoje' => $hoje
+            ]);
+
 
         $pesquisasValidas = '';
 
-        if ($queryPes != null){
+        if ($queryPes != null) {
 
             foreach ($queryPes as $idPesquisa) {
                 $pesquisasValidas .= $idPesquisa->id . ', ';
@@ -54,7 +55,7 @@ class ConsultaController extends Controller
                 'cavalo_cpf_cnpj_proprietario' => $request->cavalo_cpf_cnpj_proprietario,
             ]);
 
-            if ($queryCavalo <> null){
+            if ($queryCavalo <> null) {
 
                 $pesquisasValidas = '';
 
@@ -106,10 +107,6 @@ class ConsultaController extends Controller
                 }
 
 
-
-
-
-
             }
 
             // nao retornou pesquisa por cavalo (placa e cpf)
@@ -118,11 +115,13 @@ class ConsultaController extends Controller
             die('setNovaConstula nao retornou pesquisa por cavalo (placa e cpf) ');
 
 
-        }
-        else{
+        } else {
             // nao retornou pesquisa por cpf
             //  setNovaConstula($dados);
-            die('nao eh iguala nulo nao retornou pesquisa por cpf ');
+
+
+
+            die(' nao retornou pesquisa por cpf ');
         }
 
     }

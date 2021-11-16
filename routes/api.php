@@ -18,12 +18,26 @@ Route::post('auth/login', 'AuthController@login')->name('login');
 Route::post('auth/refresh', 'AuthController@refresh')->name('refresh');
 
 
+
 Route::group(['middleware' => ['apiJWT']], function (){
 
     Route::get('auth/me', 'AuthController@me')->name('me');
     Route::post('auth/logout', 'AuthController@logout')->name('logout');
 
     Route::get('matrizes-filiais', 'ClienteController@matrizesFiliais')->name('matrizesFiliais');
+
+    Route::get('meus-usuarios', 'Auxiliar\UsuarioController@meusUsuarios')->name('meus-usuarios');
+
+    Route::get('/materiais', 'MaterialController@index')->name('materiais');
+
+    Route::get('/valores-mercadorias-autonomo', 'MaterialController@valoresMercadoriasAutonomo')->name('valores-mercadorias-autonomo');
+    Route::get('/valores-mercadorias-rh', 'MaterialController@valoresMercadoriasRH')->name('valores-mercadorias-rh');
+    Route::get('/valores-mercadorias-frota', 'MaterialController@valoresMercadoriasFrota')->name('valores-mercadorias-frota');
+    Route::get('/valores-mercadorias-agregado', 'MaterialController@valoresMercadoriasAgregado')->name('valores-mercadorias-agregado');
+
+    Route::get('veiculos', 'ClienteController@veiculos')->name('veiculos');
+
+    Route::get('veiculos/marcas', 'ClienteController@marcas')->name('marcas');
 
 
     //consultas

@@ -28,4 +28,9 @@ class MatrizFilial extends Model
         return $cliente;
     }
 
+    public function usuariosFiliasOBJ()
+    {
+        return $this->hasMany(UsuarioMatrizFilial::class, 'matriz_filial', 'id');
+    }
+
 }
