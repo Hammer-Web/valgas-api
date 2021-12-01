@@ -42,6 +42,29 @@ class UsuarioController extends Controller
     }
 
 
+    public function meusUsuariosID()
+    {
+        $user = auth('api')->user();
+
+        $usuariosJSON = array();
+
+        $cliente = Cliente::find($user->cliente_id);
+
+        if ($cliente->filiais() != null) {
+
+            foreach ($cliente->filiais as $filial) {
+
+                foreach ($filial->usuariosFiliasOBJ as $usuario) {
+                    array_push($usuariosJSON, $usuario->id);
+                }
+            }
+
+            return $usuariosJSON;
+
+        }
+    }
+
+
 
 
 }

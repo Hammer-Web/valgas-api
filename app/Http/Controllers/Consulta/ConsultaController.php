@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Consulta;
 
+use App\Http\Controllers\Auxiliar\UsuarioController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,16 @@ class ConsultaController extends Controller
     public function solicitar(Request $request)
     {
         $hoje = time();
+
+        $uarios = new UsuarioController();
+        $meusUsuarios = $uarios->meusUsuariosID();
+
+        if (!in_array($request->usuario, $meusUsuarios)) {
+            return response()->json([
+                'error' => 'Unauthorized',
+                'message' => 'Usuário informado não pertece ao cliente autenticado na API!'
+            ], 403);
+        }
 
         $dadosPes = array(
             'cpf' => $request->cpf_motorista,
@@ -76,7 +87,6 @@ class ConsultaController extends Controller
                         'carreta_1_cpf_cnpj_proprietario' => $request->carreta_1_cpf_cnpj_proprietario,
                     ]);
 
-
                 }
 
                 $valor = $request->valor;
@@ -118,7 +128,6 @@ class ConsultaController extends Controller
         } else {
             // nao retornou pesquisa por cpf
             //  setNovaConstula($dados);
-
 
 
             die(' nao retornou pesquisa por cpf ');
