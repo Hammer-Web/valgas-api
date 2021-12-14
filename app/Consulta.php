@@ -8,6 +8,7 @@ class Consulta extends Model
 {
     protected $table = 'consultas';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 
     protected $fillable = [
         'id',
