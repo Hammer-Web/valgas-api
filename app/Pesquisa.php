@@ -8,9 +8,11 @@ class Pesquisa extends Model
 {
     protected $table = 'pesquisas_a_t';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 
     protected $fillable = [
         'id',
+        'api',
         'consulta',
         'status',
         'tipo',

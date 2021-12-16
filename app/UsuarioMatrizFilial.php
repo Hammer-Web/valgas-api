@@ -8,6 +8,7 @@ class UsuarioMatrizFilial extends Model
 {
     protected $table = 'clientes_usuarios';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 
     protected $fillable = [
         'id',

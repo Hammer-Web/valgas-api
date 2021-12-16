@@ -8,6 +8,7 @@ class ValoresCarga extends Model
 {
     protected $table = 'score_valores_carga';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 
     protected $fillable = [
         'id',

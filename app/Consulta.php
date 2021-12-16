@@ -46,4 +46,14 @@ class Consulta extends Model
         's3',
         's3_keyname',
     ];
+
+    public function matrizFilialObj()
+    {
+        return $this->belongsTo(MatrizFilial::class, 'matriz_filial', 'id');
+    }
+
+    public function usuarioClienteMatrizObj()
+    {
+        return $this->belongsTo(UsuarioMatrizFilial::class, 'usuario', 'id');
+    }
 }

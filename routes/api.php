@@ -54,6 +54,23 @@ Route::group(['middleware' => ['apiJWT']], function (){
     //consultas
 
 
+    //pesquisas
+    Route::group(['prefix' => 'pesquisas', 'namespace' => 'Pesquisa'], function () {
+
+
+
+
+        Route::group(['prefix' => 'autonomo',], function () {
+
+            Route::post('/', 'AutonomoController@create')->name('solicitar-pesquisa-autonomo');
+
+
+
+        });
+    });
+    //pesquisas
+
+
 
 });
 

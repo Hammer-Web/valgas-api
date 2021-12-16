@@ -8,17 +8,19 @@ class MatrizFilial extends Model
 {
     protected $table = 'matriz_filial';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 
     protected $fillable = [
-      'id',
-      'cliente',
-      'tipo',
-      'cnpj',
-      'nome',
-      'email',
-      'responsavel',
-      'status',
-      'deleted'
+        'id',
+        'cliente',
+        'tipo',
+        'cnpj',
+        'nome',
+        'email',
+        'telefone',
+        'responsavel',
+        'status',
+        'deleted'
     ];
 
     public function clienteOb()

@@ -8,6 +8,7 @@ class Material extends Model
 {
     protected $table = 'materiais';
     protected $primaryKey = 'id';
+    public $timestamps = false;
 
     protected $fillable = [
         'id',
