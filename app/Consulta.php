@@ -13,6 +13,7 @@ class Consulta extends Model
     protected $fillable = [
         'id',
         'status',
+        'api',
         'cpf_motorista',
         'data_vencimento_cnh',
         'cavalo_cpf_cnpj_proprietario',

@@ -49,7 +49,8 @@ class ConsultaController extends Controller
                 'hoje' => $hoje
             ]);
 
-        $ar = array('cpf' => $request->cpf_motorista,
+        $ar = array(
+            'cpf' => $request->cpf_motorista,
             'tipo' => 1,
             'validade' => time(),
             'cliente_id' => auth('api')->user()->cliente_id,
@@ -62,26 +63,27 @@ class ConsultaController extends Controller
 
         $ar = array(
             'status' => 1,
+            'api' => 1,
             'cpf_motorista' => $request->cpf_motorista,
             'cavalo_placa' => $request->cavalo_placa,
             'cavalo_cpf_cnpj_proprietario' => $request->cavalo_cpf_cnpj_proprietario,
-            'carreta_1_placa' => $request->carreta_1_placa ,
-            'carreta_1_cpf_cnpj_proprietario' => $request->carreta_1_cpf_cnpj_proprietario ,
-            'carreta_2_placa_carreta' => $request->carreta_2_placa_carreta ,
-            'carreta_2_cpf_cnpj_proprietario' => $request->carreta_2_cpf_cnpj_proprietario ,
-            'carreta_3_placa' => $request->carreta_3_placa ,
-            'carreta_3_cpf_cnpj_proprietario' => $request->carreta_3_cpf_cnpj_proprietario ,
-            'origem_cep_carga' => $request->origem_cep_carga ,
-            'origem_cidade_carga' => $request->origem_cidade_carga ,
-            'origem_estado_carga' => $request->origem_estado_carga ,
-            'destino_cep_carga' => $request->destino_cep_carga ,
-            'destino_cidade_carga' => $request->destino_cidade_carga ,
-            'destino_estado_carga' => $request->destino_estado_carga ,
-            'tipo_mercadoria' => $request->tipo_mercadoria ,
-            'valor' => $request->valor ,
-            'data' => time() ,
-            'usuario' => $usuarioMatriz->id ,
-            'matriz_filial' => $usuarioMatriz->matrizFilialObj->id ,
+            'carreta_1_placa' => $request->carreta_1_placa,
+            'carreta_1_cpf_cnpj_proprietario' => $request->carreta_1_cpf_cnpj_proprietario,
+            'carreta_2_placa_carreta' => $request->carreta_2_placa_carreta,
+            'carreta_2_cpf_cnpj_proprietario' => $request->carreta_2_cpf_cnpj_proprietario,
+            'carreta_3_placa' => $request->carreta_3_placa,
+            'carreta_3_cpf_cnpj_proprietario' => $request->carreta_3_cpf_cnpj_proprietario,
+            'origem_cep_carga' => $request->origem_cep_carga,
+            'origem_cidade_carga' => $request->origem_cidade_carga,
+            'origem_estado_carga' => $request->origem_estado_carga,
+            'destino_cep_carga' => $request->destino_cep_carga,
+            'destino_cidade_carga' => $request->destino_cidade_carga,
+            'destino_estado_carga' => $request->destino_estado_carga,
+            'tipo_mercadoria' => $request->tipo_mercadoria,
+            'valor' => $request->valor,
+            'data' => time(),
+            'usuario' => $usuarioMatriz->id,
+            'matriz_filial' => $usuarioMatriz->matrizFilialObj->id,
         );
 
         if ($queryPes != null) {
@@ -188,9 +190,6 @@ class ConsultaController extends Controller
             return response()->json($msg, '200');
 
 
-
-
-
         } else {
             // nao retornou pesquisa por cpf
             //  setNovaConstula($dados);
@@ -209,7 +208,8 @@ class ConsultaController extends Controller
 
     }
 
-    public function setConsultaSemPesquisa($dados){
+    public function setConsultaSemPesquisa($dados)
+    {
 
     }
 
