@@ -37,7 +37,8 @@ Route::group(['middleware' => ['apiJWT']], function (){
 
     Route::get('veiculos', 'ClienteController@veiculos')->name('veiculos');
 
-    Route::get('veiculos/marcas', 'ClienteController@marcas')->name('marcas');
+    Route::get('veiculos/marcas',   'ClienteController@marcas')->name('marcas');
+    Route::get('veiculos/modelos',  'ClienteController@modelos')->name('modelos');
 
 
     //consultas
@@ -62,7 +63,8 @@ Route::group(['middleware' => ['apiJWT']], function (){
 
         Route::group(['prefix' => 'autonomo',], function () {
 
-            Route::post('/', 'AutonomoController@create')->name('solicitar-pesquisa-autonomo');
+            Route::post('/',            'AutonomoController@create')->name('solicitar-pesquisa-autonomo');
+            Route::post('/veiculo',     'AutonomoController@vehicle')->name('solicitar-pesquisa-autonomo-veiculo');
 
 
 

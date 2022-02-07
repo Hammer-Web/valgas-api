@@ -56,21 +56,23 @@ class ClienteController extends Controller
 
     public function veiculos()
     {
-        $queryPes = DB::select(" SELECT * FROM veiculos limit 10 ");
+        $queryPes = DB::select(" SELECT * FROM veiculos  ");
 
         return response()->json($queryPes);
-
-
 
     }
 
     public function marcas()
     {
-        $queryPes = DB::select(" SELECT * FROM marcas_montadoras WHERE id <> 1 limit 10 ");
+        $queryPes = DB::select(" SELECT * FROM marcas_montadoras WHERE id <> 1  ");
 
         return response()->json($queryPes);
+    }
 
+    public function modelos()
+    {
+        $queryPes = DB::select(" SELECT * FROM modelos_veiculos ");
 
-
+        return response()->json($queryPes);
     }
 }

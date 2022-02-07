@@ -8,6 +8,8 @@ use App\Fatura;
 use App\Http\Controllers\Auxiliar\UsuarioController;
 use App\Http\Controllers\Controller;
 use App\Pesquisa;
+use App\PesquisaCavalo;
+use App\Support\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +19,7 @@ class AutonomoController extends Controller
 {
     public function create(Request $request)
     {
-        if (empty($request->consulta)){
+        if (empty($request->consulta)) {
 
             $dados = array(
                 'erro' => array(
@@ -30,7 +32,7 @@ class AutonomoController extends Controller
 
         $consultaObj = Consulta::find($request->consulta);
 
-        if ($consultaObj == null){
+        if ($consultaObj == null) {
             $dados = array(
                 'erro' => array(
                     'msg' => 'Consulta não encontrada!'
@@ -39,7 +41,6 @@ class AutonomoController extends Controller
 
             return response()->json($dados, 203);
         }
-
 
         $uarios = new UsuarioController();
         $meusUsuarios = $uarios->meusUsuariosID();
@@ -51,13 +52,12 @@ class AutonomoController extends Controller
             ], 203);
         }
 
-
         $tipoPesquisaPrecoId = DB::select(" SELECT * FROM tipo_pesquisa where cliente = :cliente order by valor desc LIMIT 1 ", [
             'cliente' => Auth::user()->cliente_id
         ]);
 
+        if (empty($tipoPesquisaPrecoId)) {
 
-        if (empty($tipoPesquisaPrecoId)){
             $dados = array(
                 'erro' => array(
                     'msg' => 'Valores para tipo de pesquisa não definido, contate o administrador!'
@@ -67,8 +67,8 @@ class AutonomoController extends Controller
             return response()->json($dados, 203);
         }
 
-
         $cliente = Cliente::find(Auth::user()->cliente_id);
+
 
         $createFixos = array(
             'api' => 1,
@@ -77,6 +77,7 @@ class AutonomoController extends Controller
             'padrao_pesquisa_preco' => $tipoPesquisaPrecoId[0]->id,
             'tipo' => 1,
             'empresa' => $cliente->nome,
+            'cliente_id' => Auth::user()->cliente_id,
             'matriz_filial_id' => $consultaObj->matrizFilialObj->id,
             'matriz_filial_nome' => $consultaObj->matrizFilialObj->nome,
             'matriz_filial_telefone' => $consultaObj->matrizFilialObj->telefone,
@@ -154,7 +155,112 @@ class AutonomoController extends Controller
             'pesquisa' => $pesquisa->id
         );
 
-        return response()->json($dados, 203);
+        return response()->json($dados, 200);
+
+
+    }
+
+    public function vehicle(Request $request)
+    {
+        $modelo = $request->modelo;
+        $marca = $request->marca;
+
+        $queryModelo = DB::select(" SELECT * FROM modelos_veiculos WHERE id = $modelo");
+        $queryMarca = DB::select(" SELECT * FROM marcas_montadoras WHERE id = $marca");
+
+        if (empty($queryModelo)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'ID de modelo de veículo inválido!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        if (empty($queryMarca)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'ID de marca de veículo inválido!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        $placa = Helper::formatarPlaca($request->placa);
+
+        $isPes = Pesquisa::where('id', $request->pesquisa)->first();
+
+        if ($isPes == null){
+
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Pesquisa não encontrada!'
+                )
+            );
+
+            return response()->json($dados, 204);
+        }
+
+
+        if ($isPes->cliente_id != Auth::user()->cliente_id){
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'A pesquisa informada não pertece ao seu usuário!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        $isDadosVeiculoPesquisa = PesquisaCavalo::where('pesquisa', $request->pesquisa)->get();
+
+        if (!empty($isDadosVeiculoPesquisa)){
+
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'A pesquisa informada já possui veículo atribuído!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+
+        $pesquisaCavalo = PesquisaCavalo::create([
+            'pesquisa' => $request->pesquisa,
+            'cavalo_nome_proprietario' => $request->nome_proprietario,
+            'cavalo_rntc_proprietario' => $request->_rntc_proprietario,
+            'cavalo_cpf_cnpj_proprietario' => $request->cpf_cnpj_proprietario,
+            'cavalo_cep_proprietario' => $request->cep_proprietario,
+            'cavalo_placa' => $request->placa,
+            'cavalo_cidade_emplacamento' => $request->cidade_emplacamento,
+            'cavalo_estado_emplacamento' => $request->estado_emplacamento,
+            'cavalo_renavam' => $request->renavam,
+            'cavalo_marca' => $request->marca,
+            'cavalo_modelo' => $request->modelo,
+            'cavalo_chassi' => $request->chassi,
+            'cavalo_ano' => $request->ano,
+            'cavalo_cor' => $request->cor,
+            'cavalo_telefone_residencial_proprietario' => $request->telefone_residencial_proprietario,
+            'cavalo_telefone_residencial_contato_proprietario' => $request->telefone_residencial_contato_proprietario,
+            'cavalo_telefone_comercial_proprietario' => $request->telefone_comercial_proprietario,
+            'cavalo_telefone_comercial_contato_proprietario' => $request->telefone_comercial_contato_proprietario,
+            'cavalo_logradouro_proprietario' => $request->logradouro_proprietario,
+            'cavalo_numero_proprietario' => $request->numero_proprietario,
+            'cavalo_complemento_proprietario' => $request->complemento_proprietario,
+            'cavalo_bairro_proprietario' => $request->bairro_proprietario,
+            'cavalo_cidade_proprietario' => $request->cidade_proprietario,
+            'cavalo_estado_proprietario' => $request->estado_proprietario,
+            'cavalo_rnt' => $request->rnt,
+        ]);
+
+        $dados = array(
+            'msg' => 'Dados de veículos vinculados à pesquisa!'
+        );
+
+        return response()->json($dados, 200);
 
 
     }
