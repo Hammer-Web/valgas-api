@@ -16,8 +16,8 @@ class ConsultaController extends Controller
     {
         $hoje = time();
 
-        $uarios = new UsuarioController();
-        $meusUsuarios = $uarios->meusUsuariosID();
+        $usuarios = new UsuarioController();
+        $meusUsuarios = $usuarios->meusUsuariosID();
 
         if (!in_array($request->usuario, $meusUsuarios)) {
             return response()->json([

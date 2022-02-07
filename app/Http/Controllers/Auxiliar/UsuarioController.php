@@ -50,6 +50,8 @@ class UsuarioController extends Controller
 
         $cliente = Cliente::find($user->cliente_id);
 
+
+
         if ($cliente->filiais() != null) {
 
             foreach ($cliente->filiais as $filial) {

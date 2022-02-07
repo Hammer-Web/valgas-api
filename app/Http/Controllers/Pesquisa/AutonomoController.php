@@ -56,15 +56,17 @@ class AutonomoController extends Controller
             'cliente' => Auth::user()->cliente_id
         ]);
 
-        if ($tipoPesquisaPrecoId[0]->id == null){
+
+        if (empty($tipoPesquisaPrecoId)){
             $dados = array(
                 'erro' => array(
-                    'msg' => 'Valores de pesquisa não definido, contate o administrado!'
+                    'msg' => 'Valores para tipo de pesquisa não definido, contate o administrador!'
                 )
             );
 
             return response()->json($dados, 203);
         }
+
 
         $cliente = Cliente::find(Auth::user()->cliente_id);
 
