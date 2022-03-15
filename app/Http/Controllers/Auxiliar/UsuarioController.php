@@ -6,6 +6,7 @@ use App\Cliente;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 class UsuarioController extends Controller
@@ -64,6 +65,29 @@ class UsuarioController extends Controller
             return $usuariosJSON;
 
         }
+    }
+
+
+    public function padroesDePequisas()
+    {
+        $client_id = $user = auth('api')->user()->cliente_id;
+
+        $padroes = DB::select("SELECT id, titulo FROM tipo_pesquisa WHERE cliente = $client_id ");
+
+        if ($padroes == null){
+
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Nenhum padrão de pesquisa cadastrado!'
+                )
+            );
+
+            return response()->json($dados, 203);
+
+        }
+
+        return response()->json($padroes);
+
     }
 
 

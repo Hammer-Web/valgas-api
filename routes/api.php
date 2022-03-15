@@ -27,6 +27,7 @@ Route::group(['middleware' => ['apiJWT']], function (){
     Route::get('matrizes-filiais', 'ClienteController@matrizesFiliais')->name('matrizesFiliais');
 
     Route::get('meus-usuarios', 'Auxiliar\UsuarioController@meusUsuarios')->name('meus-usuarios');
+    Route::get('padroes-de-pesquisas', 'Auxiliar\UsuarioController@padroesDePequisas')->name('padroes-de-pesquisas');
 
     Route::get('/materiais', 'MaterialController@index')->name('materiais');
 
@@ -66,9 +67,14 @@ Route::group(['middleware' => ['apiJWT']], function (){
             Route::post('/',            'AutonomoController@create')->name('solicitar-pesquisa-autonomo');
             Route::post('/veiculo',     'AutonomoController@vehicle')->name('solicitar-pesquisa-autonomo-veiculo');
 
+        });
 
+        Route::group(['prefix' => 'rh',], function () {
+
+            Route::post('/',            'RHController@create')->name('solicitar-pesquisa-rh');
 
         });
+
     });
     //pesquisas
 
