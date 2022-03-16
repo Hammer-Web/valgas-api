@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Pesquisa;
 use App\UsuarioMatrizFilial;
+use App\UsuarioSistema;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -22,7 +23,7 @@ class notifyOperatorNewSearch extends Mailable
     private $user;
     private $search;
 
-    public function __construct(UsuarioMatrizFilial $user, Pesquisa $search)
+    public function __construct(UsuarioSistema $user, Pesquisa $search)
     {
         $this->user = $user;
         $this->search = $search;
@@ -36,7 +37,7 @@ class notifyOperatorNewSearch extends Mailable
     public function build()
     {
         $this->subject('Nova Pesquisa!');
-        $this->to($this->user->email, $this->user->nome);
+        $this->to($this->user->usu_email, $this->user->usu_nome);
 
         return $this->markdown('mail.notifyOperatorNewSearch', [
             'user' => $this->user,

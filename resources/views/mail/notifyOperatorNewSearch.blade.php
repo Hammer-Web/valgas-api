@@ -1,6 +1,6 @@
 @component('mail::message')
 
-# Olá {{$user->nome}}
+# Olá {{$user->usu_nome}}
 ## Nova pesquisa para análisar
 
 ### Pesquisa: #{{$search->id}}

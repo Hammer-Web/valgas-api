@@ -6,6 +6,7 @@ use App\Mail\notifyOperatorNewSearch;
 use App\Pesquisa;
 use App\User;
 use App\UsuarioMatrizFilial;
+use App\UsuarioSistema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -57,7 +58,7 @@ class AuthController extends Controller
 
     public function teste()
     {
-        $user = UsuarioMatrizFilial::find(4);
+        $user = UsuarioSistema::find(10);
         $search = Pesquisa::find(42924);
 
 

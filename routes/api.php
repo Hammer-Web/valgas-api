@@ -62,8 +62,6 @@ Route::group(['middleware' => ['apiJWT']], function (){
     Route::group(['prefix' => 'pesquisas', 'namespace' => 'Pesquisa'], function () {
 
 
-
-
         Route::group(['prefix' => 'autonomo',], function () {
 
             Route::post('/',            'AutonomoController@create')->name('solicitar-pesquisa-autonomo');
@@ -76,6 +74,8 @@ Route::group(['middleware' => ['apiJWT']], function (){
             Route::post('/',                                        'RHController@create')->name('solicitar-pesquisa-rh');
             Route::post('/documentacao/habilitacao',                'RHController@sendDocumentCNH')->name('sendDocumentCNH');
             Route::post('/documentacao/comprovante-de-residencia',  'RHController@sendDocumentResi')->name('sendDocumentResi');
+
+            Route::post('/informacoes-complementares', 'RHController@infoComplete')->name('infoComplete');
 
         });
 

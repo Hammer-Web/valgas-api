@@ -7,12 +7,17 @@ use App\DocumentosPesquisa;
 use App\Fatura;
 use App\Http\Controllers\Auxiliar\UsuarioController;
 use App\Http\Controllers\Controller;
+use App\Mail\notifyOperatorNewSearch;
 use App\Pesquisa;
+use App\PesquisaComplementar;
+use App\Support\Helper;
 use App\User;
 use App\UsuarioMatrizFilial;
+use App\UsuarioSistema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class RHController extends Controller
 {
@@ -32,14 +37,14 @@ class RHController extends Controller
         $padroes = DB::select(" SELECT id FROM tipo_pesquisa where cliente = $cliente ");
         $permitidos = array();
 
-        if ($padroes){
-            foreach ($padroes as $pa){
+        if ($padroes) {
+            foreach ($padroes as $pa) {
                 array_push($permitidos, $pa->id);
             }
         }
 
 
-        if (!in_array($request->padrao_pesquisa, $permitidos)){
+        if (!in_array($request->padrao_pesquisa, $permitidos)) {
 
             $dados = array(
                 'erro' => array(
@@ -141,7 +146,7 @@ class RHController extends Controller
 
     public function sendDocumentCNH(Request $request)
     {
-        if ($request->file('motorista_habilitacao') == null){
+        if ($request->file('motorista_habilitacao') == null) {
             $dados = array(
                 'erro' => array(
                     'msg' => 'Arquivo não recebido!'
@@ -154,7 +159,7 @@ class RHController extends Controller
 
         $isPes = Pesquisa::where('id', $request->pesquisa)->first();
 
-        if ($isPes == null){
+        if ($isPes == null) {
 
             $dados = array(
                 'erro' => array(
@@ -165,7 +170,7 @@ class RHController extends Controller
             return response()->json($dados, 204);
         }
 
-        if ($isPes->cliente_id != Auth::user()->cliente_id){
+        if ($isPes->cliente_id != Auth::user()->cliente_id) {
             $dados = array(
                 'erro' => array(
                     'msg' => 'A pesquisa informada não pertece ao seu usuário!'
@@ -177,9 +182,9 @@ class RHController extends Controller
 
         $isDocu = DocumentosPesquisa::where('pesquisa', $request->pesquisa)->first();
 
-        if (!$isDocu){
+        if (!$isDocu) {
 
-            $isDocu =  DocumentosPesquisa::create([
+            $isDocu = DocumentosPesquisa::create([
                 'pesquisa' => $request->pesquisa
             ]);
 
@@ -206,9 +211,9 @@ class RHController extends Controller
             return response()->json($dados, 203);
         }
 
-        $name = 'documentos/motorista-habilitacao-' . $request->pesquisa.'.'.$file->getClientOriginalExtension();
+        $name = 'documentos/motorista-habilitacao-' . $request->pesquisa . '.' . $file->getClientOriginalExtension();
 
-        $url = 'https://s3.'.env('AWS_DEFAULT_REGION').'.amazonaws.com/' . env('AWS_BUCKET') . '/'.$name;
+        $url = 'https://s3.' . env('AWS_DEFAULT_REGION') . '.amazonaws.com/' . env('AWS_BUCKET') . '/' . $name;
 
         $file->storeAs('', $name, 's3');
 
@@ -227,7 +232,7 @@ class RHController extends Controller
 
     public function sendDocumentResi(Request $request)
     {
-        if ($request->file('motorista_comprovante_residencia') == null){
+        if ($request->file('motorista_comprovante_residencia') == null) {
             $dados = array(
                 'erro' => array(
                     'msg' => 'Arquivo não recebido!'
@@ -239,7 +244,7 @@ class RHController extends Controller
 
         $isPes = Pesquisa::where('id', $request->pesquisa)->first();
 
-        if ($isPes == null){
+        if ($isPes == null) {
 
             $dados = array(
                 'erro' => array(
@@ -250,7 +255,7 @@ class RHController extends Controller
             return response()->json($dados, 204);
         }
 
-        if ($isPes->cliente_id != Auth::user()->cliente_id){
+        if ($isPes->cliente_id != Auth::user()->cliente_id) {
             $dados = array(
                 'erro' => array(
                     'msg' => 'A pesquisa informada não pertece ao seu usuário!'
@@ -262,9 +267,9 @@ class RHController extends Controller
 
         $isDocu = DocumentosPesquisa::where('pesquisa', $request->pesquisa)->first();
 
-        if (!$isDocu){
+        if (!$isDocu) {
 
-            $isDocu =  DocumentosPesquisa::create([
+            $isDocu = DocumentosPesquisa::create([
                 'pesquisa' => $request->pesquisa
             ]);
 
@@ -291,9 +296,9 @@ class RHController extends Controller
             return response()->json($dados, 203);
         }
 
-        $name = 'documentos/motorista-comprovante-residencia-' . $request->pesquisa.'.'.$file->getClientOriginalExtension();
+        $name = 'documentos/motorista-comprovante-residencia-' . $request->pesquisa . '.' . $file->getClientOriginalExtension();
 
-        $url = 'https://s3.'.env('AWS_DEFAULT_REGION').'.amazonaws.com/' . env('AWS_BUCKET') . '/'.$name;
+        $url = 'https://s3.' . env('AWS_DEFAULT_REGION') . '.amazonaws.com/' . env('AWS_BUCKET') . '/' . $name;
 
         $file->storeAs('', $name, 's3');
 
@@ -307,5 +312,138 @@ class RHController extends Controller
         );
 
         return response()->json($dados, 200);
+    }
+
+    public function infoComplete(Request $request)
+    {
+
+        $isPes = Pesquisa::where('id', $request->pesquisa)->first();
+
+        if ($isPes == null) {
+
+            $dados = array(
+                'erro' => array(
+                    'msg' => ' Pesquisa não encontrada!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        if ($isPes->cliente_id != Auth::user()->cliente_id) {
+
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'A pesquisa informada não pertece ao seu usuário!'
+                )
+            );
+
+            return response()->json($dados, 203);
+
+        }
+
+        if (empty($request->pesquisa)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Informe um ID de pesquisa!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        if (empty($request->roubo)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Informe o campo Roubo!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        if (empty($request->acidente)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Informe o campo acidente!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        if (empty($request->acidente)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Informe o campo acidente!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        if (empty($request->transportou)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Informe o campo transportou!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        if (empty($request->rastreador)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Informe o campo rastreador!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+
+        $comp = PesquisaComplementar::create([
+            'pesquisa' => $request->pesquisa,
+            'roubo' => $request->roubo,
+            'acidente' => $request->acidente,
+            'transportou' => $request->transportou,
+            'rastreador' => $request->rastreador,
+            'observacoes' => $request->observacoes,
+            'valor' => 7,
+        ]);
+
+        $pesquisa = Pesquisa::find($request->pesquisa);
+
+        $pesquisa->status = 3;
+        $pesquisa->data_pesquisa = time();
+
+
+        $proximoFila = Helper::nextToTheQueue();
+
+        if ($proximoFila) {
+
+            $operador = UsuarioSistema::find($proximoFila);
+
+            $pesquisa = Pesquisa::find($request->pesquisa);
+
+            $pesquisa->operador_analise = $proximoFila;
+
+            if ($operador) {
+                Mail::send(new notifyOperatorNewSearch($operador, $pesquisa));
+            }
+        }
+
+
+        $pesquisa->save();
+
+        $dados = array(
+            'msg' => 'Solicitação de pesquisa realizada com sucesso! Sua pesquisa foi enviada para os analistas!',
+            'pesquisa' => $request->pesquisa
+        );
+
+        return response()->json($dados, 200);
+
+
     }
 }
