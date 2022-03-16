@@ -46,6 +46,7 @@ Route::group(['middleware' => ['apiJWT']], function (){
     Route::group(['prefix' => 'consultas', 'namespace' => 'Consulta'], function () {
 
         Route::post('/solicitar', 'ConsultaController@solicitar');
+        Route::post('/solicitar', 'ConsultaController@solicitar');
 
 //        Route::prefix('courses')->group(function () {
 //            Route::get('/', 'UserController@courses');
@@ -71,7 +72,9 @@ Route::group(['middleware' => ['apiJWT']], function (){
 
         Route::group(['prefix' => 'rh',], function () {
 
-            Route::post('/',            'RHController@create')->name('solicitar-pesquisa-rh');
+            Route::post('/',                                        'RHController@create')->name('solicitar-pesquisa-rh');
+            Route::post('/documentacao/habilitacao',                'RHController@sendDocumentCNH')->name('sendDocumentCNH');
+            Route::post('/documentacao/comprovante-de-residencia',  'RHController@sendDocumentResi')->name('sendDocumentResi');
 
         });
 

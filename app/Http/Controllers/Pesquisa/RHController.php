@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pesquisa;
 
 use App\Cliente;
+use App\DocumentosPesquisa;
 use App\Fatura;
 use App\Http\Controllers\Auxiliar\UsuarioController;
 use App\Http\Controllers\Controller;
@@ -136,5 +137,85 @@ class RHController extends Controller
         );
 
         return response()->json($dados, 200);
+    }
+
+    public function sendDocumentCNH(Request $request)
+    {
+        $isPes = Pesquisa::where('id', $request->pesquisa)->first();
+
+        if ($isPes == null){
+
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Pesquisa não encontrada!'
+                )
+            );
+
+            return response()->json($dados, 204);
+        }
+
+        if ($isPes->cliente_id != Auth::user()->cliente_id){
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'A pesquisa informada não pertece ao seu usuário!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        $isDocu = DocumentosPesquisa::where('pesquisa', $request->pesquisa)->first();
+
+        if (!$isDocu){
+
+            $isDocu =  DocumentosPesquisa::create([
+                'pesquisa' => $request->pesquisa
+            ]);
+
+        }
+
+        $file = $request->file('motorista_habilitacao');
+
+        $mime_type_permitidos_img = array(
+            'image/jpg',
+            'image/jpeg',
+            'image/pjpeg',
+            'image/png',
+            'image/x-png',
+            'application/pdf'
+        );
+
+        if (!in_array($file->getClientMimeType(), $mime_type_permitidos_img)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Arquivo não permitido!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        $name = 'documentos/motorista-habilitacao-' . $request->pesquisa.'.'.$file->getClientOriginalExtension();
+
+        $url = 'https://s3.'.env('AWS_DEFAULT_REGION').'.amazonaws.com/' . env('AWS_BUCKET') . '/'.$name;
+
+        $file->storeAs('', $name, 's3');
+
+        $isDocu->habilitacao_s3 = $url;
+        $isDocu->habilitacao_s3_keyname = $name;
+        $isDocu->save();
+
+        $dados = array(
+            'msg' => 'Documento de Habilitação enviado com  sucesso',
+            'pesquisa' => $isDocu->pesquisa
+        );
+
+        return response()->json($dados, 200);
+
+    }
+
+    public function sendDocumentResi(Request $request)
+    {
+        var_dump($request->file());
     }
 }
