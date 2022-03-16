@@ -141,6 +141,17 @@ class RHController extends Controller
 
     public function sendDocumentCNH(Request $request)
     {
+        if ($request->file('motorista_habilitacao') == null){
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Arquivo não recebido!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+
         $isPes = Pesquisa::where('id', $request->pesquisa)->first();
 
         if ($isPes == null){
@@ -216,6 +227,85 @@ class RHController extends Controller
 
     public function sendDocumentResi(Request $request)
     {
-        var_dump($request->file());
+        if ($request->file('motorista_comprovante_residencia') == null){
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Arquivo não recebido!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        $isPes = Pesquisa::where('id', $request->pesquisa)->first();
+
+        if ($isPes == null){
+
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Pesquisa não encontrada!'
+                )
+            );
+
+            return response()->json($dados, 204);
+        }
+
+        if ($isPes->cliente_id != Auth::user()->cliente_id){
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'A pesquisa informada não pertece ao seu usuário!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        $isDocu = DocumentosPesquisa::where('pesquisa', $request->pesquisa)->first();
+
+        if (!$isDocu){
+
+            $isDocu =  DocumentosPesquisa::create([
+                'pesquisa' => $request->pesquisa
+            ]);
+
+        }
+
+        $file = $request->file('motorista_comprovante_residencia');
+
+        $mime_type_permitidos_img = array(
+            'image/jpg',
+            'image/jpeg',
+            'image/pjpeg',
+            'image/png',
+            'image/x-png',
+            'application/pdf'
+        );
+
+        if (!in_array($file->getClientMimeType(), $mime_type_permitidos_img)) {
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'Arquivo não permitido!'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+        $name = 'documentos/motorista-comprovante-residencia-' . $request->pesquisa.'.'.$file->getClientOriginalExtension();
+
+        $url = 'https://s3.'.env('AWS_DEFAULT_REGION').'.amazonaws.com/' . env('AWS_BUCKET') . '/'.$name;
+
+        $file->storeAs('', $name, 's3');
+
+        $isDocu->comprovante_s3 = $url;
+        $isDocu->comprovante_s3_keyname = $name;
+        $isDocu->save();
+
+        $dados = array(
+            'msg' => 'Comprovante de residência enviado com  sucesso',
+            'pesquisa' => $isDocu->pesquisa
+        );
+
+        return response()->json($dados, 200);
     }
 }
