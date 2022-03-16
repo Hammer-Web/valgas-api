@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\notifyOperatorNewSearch;
+use App\Pesquisa;
 use App\User;
+use App\UsuarioMatrizFilial;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -49,6 +53,15 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60
         ]);
+    }
+
+    public function teste()
+    {
+        $user = UsuarioMatrizFilial::find(4);
+        $search = Pesquisa::find(42924);
+
+
+        Mail::send(new notifyOperatorNewSearch($user, $search));
     }
 
 }

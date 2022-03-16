@@ -17,6 +17,7 @@ Route::post('auth/login', 'AuthController@login')->name('login');
 
 Route::post('auth/refresh', 'AuthController@refresh')->name('refresh');
 
+Route::get('testeEmail', 'AuthController@teste')->name('teste');
 
 
 Route::group(['middleware' => ['apiJWT']], function (){
