@@ -11,7 +11,12 @@
 |
 */
 
-
-
-
-//Auth::routes();
+//Route::get('/testpass', function(){
+//
+//    $user = \App\User::find(2);
+//
+//
+//    $user->password = bcrypt('7r33P99IuuPVM9rF5ZS0hj6oS3MxxM7Qd8oFQTjT');
+//    $user->save();
+//
+//});

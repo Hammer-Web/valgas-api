@@ -14,6 +14,7 @@ use App\Support\Helper;
 use App\User;
 use App\UsuarioMatrizFilial;
 use App\UsuarioSistema;
+use Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +44,6 @@ class RHController extends Controller
             }
         }
 
-
         if (!in_array($request->padrao_pesquisa, $permitidos)) {
 
             $dados = array(
@@ -72,6 +72,55 @@ class RHController extends Controller
             'email_retorno' => $usuario->email,
             'data_pesquisa' => time()
         );
+
+        $rules = array(
+            'usuario' => 'required',
+            'padrao_pesquisa' => 'required',
+            'email_retorno2' => 'required',
+            'funcao' => 'required',
+            'cpf' => 'required',
+            'nome_completo' => 'required',
+            'data_nascimento' => 'required|date_format:Y-m-d',
+
+            'rg' => 'required',
+            'rg_data_emissao' => 'required',
+            'rg_estado' => 'required',
+
+            'cnh' => 'required',
+            'cnh_categoria' => 'required',
+            'cnh_vencimento' => 'required|date_format:Y-m-d',
+            'cnh_orgao_emissor' => 'required',
+            'cnh_cidade' => 'required',
+            'cnh_estado' => 'required',
+
+            'cnh_primeira_habilitacao' => 'required|date_format:Y-m-d',
+
+            'pai' => 'required',
+            'mae' => 'required',
+
+            'cep' => 'required',
+            'logradouro' => 'required',
+            'numero' => 'required',
+            'complemento' => 'required',
+            'bairro' => 'required',
+            'cidade' => 'required',
+            'estado' => 'required',
+
+            'telefone_residencial' => 'required',
+            'telefone_residencial_contato' => 'required',
+            'telefone_comercial' => 'required',
+            'telefone_comercial_contato' => 'required',
+            'telefone_referencia' => 'required',
+            'telefone_referencia_contato' => 'required',
+        );
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()){
+            return response()->json(
+              ['error' => $validator->errors()], 203
+            );
+        }
 
         $createRequest = array(
             'solicitante_usuario_id' => $request->usuario,
@@ -122,6 +171,17 @@ class RHController extends Controller
 
         $create = array_merge($createFixos, $createRequest);
 
+        if ($createRequest['cnh_vencimento'] <= time()){
+            $dados = array(
+                'erro' => array(
+                    'msg' => 'A data de vencimento da CNH está vencida [cnh_vencimento]'
+                )
+            );
+
+            return response()->json($dados, 203);
+        }
+
+
         $pesquisa = Pesquisa::create($create);
 
         $setFaturaArray = array(
@@ -161,16 +221,17 @@ class RHController extends Controller
 
         if ($isPes == null) {
 
-            $dados = array(
-                'erro' => array(
-                    'msg' => 'Pesquisa não encontrada!'
-                )
-            );
+            return response()->json([
+                'error' => 'Unauthorized',
+                'message' => 'Pesquisa não encontrada!'
+            ], 203);
 
-            return response()->json($dados, 204);
+
         }
 
+
         if ($isPes->cliente_id != Auth::user()->cliente_id) {
+
             $dados = array(
                 'erro' => array(
                     'msg' => 'A pesquisa informada não pertece ao seu usuário!'
@@ -179,6 +240,7 @@ class RHController extends Controller
 
             return response()->json($dados, 203);
         }
+
 
         $isDocu = DocumentosPesquisa::where('pesquisa', $request->pesquisa)->first();
 
@@ -252,7 +314,7 @@ class RHController extends Controller
                 )
             );
 
-            return response()->json($dados, 204);
+            return response()->json($dados, 203);
         }
 
         if ($isPes->cliente_id != Auth::user()->cliente_id) {
@@ -316,7 +378,6 @@ class RHController extends Controller
 
     public function infoComplete(Request $request)
     {
-
         $isPes = Pesquisa::where('id', $request->pesquisa)->first();
 
         if ($isPes == null) {
@@ -352,56 +413,21 @@ class RHController extends Controller
             return response()->json($dados, 203);
         }
 
-        if (empty($request->roubo)) {
-            $dados = array(
-                'erro' => array(
-                    'msg' => 'Informe o campo Roubo!'
-                )
+        $rules = array(
+            'roubo' => 'required',
+            'acidente' => 'required',
+            'acidente' => 'required',
+            'transportou' => 'required',
+            'rastreador' => 'required',
+        );
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()){
+            return response()->json(
+                ['error' => $validator->errors()], 203
             );
-
-            return response()->json($dados, 203);
         }
-
-        if (empty($request->acidente)) {
-            $dados = array(
-                'erro' => array(
-                    'msg' => 'Informe o campo acidente!'
-                )
-            );
-
-            return response()->json($dados, 203);
-        }
-
-        if (empty($request->acidente)) {
-            $dados = array(
-                'erro' => array(
-                    'msg' => 'Informe o campo acidente!'
-                )
-            );
-
-            return response()->json($dados, 203);
-        }
-
-        if (empty($request->transportou)) {
-            $dados = array(
-                'erro' => array(
-                    'msg' => 'Informe o campo transportou!'
-                )
-            );
-
-            return response()->json($dados, 203);
-        }
-
-        if (empty($request->rastreador)) {
-            $dados = array(
-                'erro' => array(
-                    'msg' => 'Informe o campo rastreador!'
-                )
-            );
-
-            return response()->json($dados, 203);
-        }
-
 
         $comp = PesquisaComplementar::create([
             'pesquisa' => $request->pesquisa,
@@ -418,24 +444,24 @@ class RHController extends Controller
         $pesquisa->status = 3;
         $pesquisa->data_pesquisa = time();
 
-
         $proximoFila = Helper::nextToTheQueue();
 
-        if ($proximoFila) {
+        $pesquisa->save();
+
+        if ($proximoFila <> false) {
 
             $operador = UsuarioSistema::find($proximoFila);
-
             $pesquisa = Pesquisa::find($request->pesquisa);
-
             $pesquisa->operador_analise = $proximoFila;
+            $pesquisa->save();
+
 
             if ($operador) {
+
                 Mail::send(new notifyOperatorNewSearch($operador, $pesquisa));
             }
         }
 
-
-        $pesquisa->save();
 
         $dados = array(
             'msg' => 'Solicitação de pesquisa realizada com sucesso! Sua pesquisa foi enviada para os analistas!',

@@ -16,8 +16,13 @@ class AuthController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
+        $teste = array(
+            'email' => $request->email,
+            'password' => $request->token_api
+        );
 
-        if (!$token = auth('api')->attempt($credentials)) {
+
+        if (!$token = auth('api')->attempt($teste)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -31,8 +36,7 @@ class AuthController extends Controller
         $data = [
             "name"  => $user->name,
             "client_id"  => $user->cliente_id,
-            "client_nome"  => $user->clienteObj->nome,
-            "lastname"  => $user->lastname,
+            "client_name"  => $user->clienteObj->nome,
             "email"  => $user->email,
         ];
 
@@ -58,8 +62,8 @@ class AuthController extends Controller
 
     public function teste()
     {
-        $user = UsuarioSistema::find(10);
-        $search = Pesquisa::find(42924);
+        $user = UsuarioSistema::find(8);
+        $search = Pesquisa::find(49122);
 
 
         Mail::send(new notifyOperatorNewSearch($user, $search));
