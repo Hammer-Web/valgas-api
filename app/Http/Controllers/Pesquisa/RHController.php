@@ -380,11 +380,12 @@ class RHController extends Controller
     {
         $isPes = Pesquisa::where('id', $request->pesquisa)->first();
 
+
         if ($isPes == null) {
 
             $dados = array(
                 'erro' => array(
-                    'msg' => ' Pesquisa não encontrada!'
+                    'msg' => 'Pesquisa não encontrada!'
                 )
             );
 

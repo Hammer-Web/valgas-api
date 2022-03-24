@@ -42,7 +42,6 @@ Route::group(['middleware' => ['apiJWT']], function (){
     Route::get('veiculos/marcas',   'ClienteController@marcas')->name('marcas');
     Route::get('veiculos/modelos',  'ClienteController@modelos')->name('modelos');
 
-
     //consultas
     Route::group(['prefix' => 'consultas', 'namespace' => 'Consulta'], function () {
 
@@ -61,6 +60,7 @@ Route::group(['middleware' => ['apiJWT']], function (){
     //pesquisas
     Route::group(['prefix' => 'pesquisas', 'namespace' => 'Pesquisa'], function () {
 
+        Route::get('/{id}',            'PesquisasController@pesquisa')->name('get-pesquisa');
 
         Route::group(['prefix' => 'autonomo',], function () {
 
@@ -81,8 +81,6 @@ Route::group(['middleware' => ['apiJWT']], function (){
 
     });
     //pesquisas
-
-
 
 });
 
