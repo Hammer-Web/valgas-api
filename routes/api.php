@@ -79,6 +79,16 @@ Route::group(['middleware' => ['apiJWT']], function (){
 
         });
 
+        Route::group(['prefix' => 'frota',], function () {
+
+            Route::post('/',                                        'FrotaController@create')->name('solicitar-pesquisa-create');
+            Route::post('/documentacao/habilitacao',                'FrotaController@sendDocumentCNH')->name('sendDocumentCNH');
+            Route::post('/documentacao/comprovante-de-residencia',  'FrotaController@sendDocumentResi')->name('sendDocumentResi');
+
+            Route::post('/informacoes-complementares', 'FrotaController@infoComplete')->name('infoComplete');
+
+        });
+
     });
     //pesquisas
 
