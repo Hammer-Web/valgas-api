@@ -32,7 +32,9 @@ class MatrizFilial extends Model
 
     public function usuariosFiliasOBJ()
     {
-        return $this->hasMany(UsuarioMatrizFilial::class, 'matriz_filial', 'id');
+        $users = UsuarioMatrizFilial::where('matriz_filial', $this->id)->where('deleted', 0)->get();
+
+        return $users;
     }
 
 }

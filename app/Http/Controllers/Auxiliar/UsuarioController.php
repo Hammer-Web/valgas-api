@@ -23,7 +23,7 @@ class UsuarioController extends Controller
 
             foreach ($cliente->filiais as $filial) {
 
-                foreach ($filial->usuariosFiliasOBJ as $usuario) {
+                foreach ($filial->usuariosFiliasOBJ() as $usuario) {
                     $data = array(
                         'id' => $usuario->id,
                         'email' => $usuario->email,
@@ -57,7 +57,7 @@ class UsuarioController extends Controller
 
             foreach ($cliente->filiais as $filial) {
 
-                foreach ($filial->usuariosFiliasOBJ as $usuario) {
+                foreach ($filial->usuariosFiliasOBJ() as $usuario) {
                     array_push($usuariosJSON, $usuario->id);
                 }
             }
