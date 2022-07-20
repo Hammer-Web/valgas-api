@@ -39,7 +39,7 @@ class PesquisasController extends Controller
         $status = StatusPesquisa::find($isPes->status);
 
         $dados = array(
-            'pesquisa' => $request->pesquisa,
+            'pesquisa' => $request->id,
             'status' => $status->titulo,
         );
 
